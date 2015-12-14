@@ -12,7 +12,7 @@
 #define  LOCSIZE         26
 #define  MAXADDR   99999999
 #define  HALFWIDTH       39
-#define  MOUSE_EXT   ".mou"
+#define  MOUSE_EXT   ".m02"
 #define  ARRAYSIZE    10000
 #define  MAXFILES       100
 #define  BACKSPACE     charpos--
