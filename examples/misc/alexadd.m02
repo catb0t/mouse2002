@@ -1,0 +1,18 @@
+~ alex addition in mouse.
+
+&TIME &SEED            ~ painfully obvious
+
+#A, ?, ?; !            ~ call with input & print
+
+$A                     ~ begin a definition of a function A
+
+  &RAND 10 * &INT 8 >  ~ same as above
+  [
+    #A, 1%, 2% 1 +;    ~ call with args and add 1
+  |
+    1% 2% +            ~ else just add
+  ]
+@                      ~ end func
+$                      ~ as above
+ ~ Golfed:
+~ &TIME &SEED #A,?,?;!$A &RAND 10* &INT 9=[#A,1%,2%1+;|1%2%+]@

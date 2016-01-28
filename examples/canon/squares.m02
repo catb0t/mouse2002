@@ -1,0 +1,4 @@
+1 N:
+( N. N. * ! " "      ~ Display squares of numbers
+  N. 10 - 0 < ^      ~ from 1 to 10
+  N. 1 + N: ) $

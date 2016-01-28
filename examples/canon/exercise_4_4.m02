@@ -1,0 +1,22 @@
+~ Exercise 4.4 from Grogono's book
+~ Multiply by 3 and add 1
+( "!Enter a number (0 terminates) : "       ~ Prompt for n
+  ? S: S. 0 > ^                             ~ Read n and check > 0
+  1 P:                                      ~ Initialize P to 1
+  ( P. S. 1 + < ^                           ~ While P <= S
+    P. N:                                   ~ Set N=P
+    "S(" P. ! ") = "                        ~ Print "S(n) ="
+    1 C:                                    ~ Initialize counter
+    ( C. 20 \ 0 = [ "!" ]                   ~ New line every 20th number
+      C. 1 + C:                             ~ Count items
+      N. ! " "                              ~ Display an item
+      N. 1 > ^                              ~ Finished if N = 1
+      N. 2 \ 0 = [ N. 2 / M: ]              ~ Item is even
+      N. 2 \ 0 > [ 3 N. * 1 + M: ]          ~ Item is odd
+      M. N:                                 ~ New value for N
+    )
+  "!"                                       ~ Print new line every new S(n)
+  P. 1 + P:                                 ~ Increment P to print next S(n)
+  )
+)
+$

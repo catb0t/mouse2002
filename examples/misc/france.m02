@@ -1,0 +1,24 @@
+~ make the france flag -- in mouse.
+
+"!"                           ~ start with a newline
+(
+  i. 1 < ^                   ~ 30 cols tall
+  #F;
+  i. 1 + i:
+)
+
+$F
+  #E; "[37m" #E; "[41m"
+  (
+    x. 26 < ^                ~ 3 *
+    '8 !'                  ~ unicode block char
+    x. 1 + x:                ~ incr x
+  )
+  #E; "[m"
+
+  "!"
+@
+
+$E27!'@
+
+$

@@ -1,0 +1,6 @@
+~ primality test in Mouse, using Wilson's theorem.
+~ prints 1 if prime, 0 otherwise
+
+?x:x.1-&FACT &SQR x.\!$
+
+~ OR ~

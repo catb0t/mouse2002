@@ -1,0 +1,38 @@
+~ optimized
+"PRIME NUMBERS!"
+"2 "
+3 n:
+100 H:
+(
+    #P,n.;           ~ call P(n)
+    n . 10001 < ^    ~ if n >= __ break
+    n . 2 + n:       ~ n+=2
+)
+"!"
+
+$P
+   1 f:        ~ f = 1
+   1 n:        ~ n = 1 (flag 1=no divisor found)
+   1% x:       ~ x = first argument
+   (
+      ~ f = f + 1
+      f. 2 + f:
+      ~ break loop when f > a or f > 100
+      f. x. < f. H. < * ^
+      ~ if a / f * f >= 0
+      x. f. \ 0 =
+      [
+         ~ set n = 0 and break out of loop
+         0 n:
+         0 ^
+      ]
+   )
+   ~ if n > 0 then print x
+   n .
+   [
+      x. ! " "
+   ]
+ ~ return
+ @
+ ~ end of program
+$

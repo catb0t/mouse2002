@@ -1,0 +1,4 @@
+??#D;#D;"A is ">["greater than"]<["less than"]=["equal to"]" B"
+$D&swap &dup &rot &rot &over @
+
+~?a:?b:"A is "a.b.>["greater than"]a.b.<["less than"]a.b.=["equal to"]" B"$

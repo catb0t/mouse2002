@@ -1,0 +1,21 @@
+~ Bubble sort: demonstrates array indexing
+"!Enter numbers to be sorted (0 terminates): "
+
+0 1 - Z:                            ~ Set number counter
+(? X: X. 0> ^                       ~ Read number and check > 0
+   Z. 1 + Z: X. A Z. + : )          ~ Count number and store it
+Z. X:                               ~ Set bound for first scan
+( X. Y: 0 X: 0 W:                   ~ Prepare for scan
+   ( W. Y. < ^                      ~ Scan until bound reached
+      A W. + . A W. 1 + + . >       ~ Compare two items of list
+         [ A W. + . A W. 1 + + .    ~ Swap them
+           A W. + : A W. 1 + + :
+           W. X: ]                  ~ Update bound
+      W. 1 + W: )                   ~ Move to next pair
+   X. 0 > ^)                        ~ Continue if a swap occurred
+"!Sorted array: "
+0 X:                                ~ Set subscript
+( A X. + . ! " "                    ~ Display one item
+   X. Z. < ^                        ~ Check if done
+   X. 1 + X: )                      ~ Move to next item
+$

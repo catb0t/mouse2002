@@ -1,0 +1,13 @@
+~ absolute value of a number without a builtin.
+
+?
+&DUP
+0 <
+[
+  _
+]
+!
+$
+
+~ Golfed:
+~ ?&DUP 0<[_!]

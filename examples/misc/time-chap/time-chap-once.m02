@@ -1,0 +1,20 @@
+~ what's the time, chap?
+
+~1 &WIDTH ~ width for &!DEC
+
+27!' "[1;34m" ~ set color
+
+"!What's the time, chap?!"
+
+"It's "
+&HOUR x:
+x. !
+":"
+&MIN !
+x. 12 < [
+  " AM."
+| " PM."
+]
+27!' "[m" ~ end color
+"!"
+ $

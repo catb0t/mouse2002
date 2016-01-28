@@ -1,0 +1,8 @@
+0 X:
+( 0 Y:
+  ( X. Y. * P: #S,P.; ! " "               ~ Display a multiplication table
+    Y. 10 - 0 < ^ Y. 1 + Y: )             ~ for numbers up to 10
+    "!" X. 10 - 0 < ^ X. 1 + X: )
+
+$S 1% 10 < [ " " ]                        ~ print leading space if < 10
+   1% 100 < [ " " ] 1% @

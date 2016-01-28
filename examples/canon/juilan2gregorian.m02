@@ -1,0 +1,41 @@
+~ Convert Julian day to Gregorian date.
+
+0 &FIX
+
+"Enter Julian day:  " ? 0.5 + j:
+
+j. &INT z:
+j. &FRAC f:
+
+z. 2299161 <
+   [
+      z. a:
+   |
+      z. 1867216.25 - 36524.25 / &INT L:
+      z. 1 + L. + L. 4 / &INT - a:
+   ]
+
+a. 1524 + b:
+b. 122.1 - 365.25 / &INT c:
+c. 365.25 * &INT d:
+b. d. - 30.6001 / &INT e:
+
+b. d. - e. 30.6001 * &INT - f. + x:
+
+e. 14 <
+   [
+      e. 1 - m:
+   |
+      e. 13 - m:
+   ]
+
+m. 2 >
+   [
+      c. 4716 - y:
+   |
+      c. 4715 - y:
+   ]
+
+"Date is " m. ! "/" x. ! "/" y. !
+
+$

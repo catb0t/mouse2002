@@ -1,0 +1,4 @@
+~ Clear screen - works only if ANSI.SYS is installed
+
+27 !' "[2J"
+$

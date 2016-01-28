@@ -1,0 +1,306 @@
+<HTML>
+
+<!-- David G. Simpson's Personal Web site         -->
+<!-- HTML code by David G. Simpson, October 2004  -->
+
+<HEAD>
+<TITLE>Mouse-2002 - Awari</TITLE>
+</HEAD>
+
+<BODY BGCOLOR=WHITE>
+
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=780>
+
+<TR>    <!-- Row 1: title bar -->
+
+<TD BGCOLOR=WHITE HEIGHT=50 COLSPAN=6>
+
+<CENTER>
+
+<H2><B><FONT FACE="Arial, Helvetica" COLOR=BLUE>MOUSE</FONT><BR>
+
+<H3><FONT FACE="Arial, Helvetica" COLOR=BLACK><I>Computer Programming Language</I></FONT></H3>
+
+</CENTER>
+
+</TD>
+
+</TR>
+
+
+<TR>   <!-- Row 2: main page body -->
+
+<TD BGCOLOR=SILVER WIDTH=5 HEIGHT=600 VALIGN=TOP>&nbsp;</TD>    <!-- Gutter -->
+
+<TD BGCOLOR=SILVER WIDTH=100 VALIGN=TOP>    <!-- Navigation bar -->
+   <TABLE BORDER=0>
+   <TR><TD><A HREF="../index.html">Home</A></TD></TR>
+   <TR><TD><A HREF="../mouse79/index.html">Mouse-79</A></TD></TR>
+   <TR><TD><A HREF="../mouse83/index.html">Mouse-83</A></TD></TR>
+   <TR><TD><A HREF="index.html">Mouse-2002</A></TD></TR>
+   <TR><TD><A HREF="../contactme.html">Contact Me</A></TD></TR>
+   <TR><TD><HR></TD></TR>
+   <TR><TD><A HREF="http://www.davidgsimpson.com">David Simpson</A></TD></TR>
+   </TABLE>
+</TD>
+
+<TD BGCOLOR=SILVER WIDTH=5 VALIGN=TOP>&nbsp;</TD>    <!-- Gutter -->
+
+<TD BGCOLOR=WHITE WIDTH=20 VALIGN=TOP>&nbsp;</TD>    <!-- Gutter -->
+
+<TD BGCOLOR=WHITE WIDTH=590 VALIGN=TOP>    <!-- Main page body -->
+
+<HR>
+
+<H3><FONT COLOR="#0000FF">AWARI - INSTRUCTIONS</FONT></H3>
+
+(From <I>BASIC Computer Games</I>, David H. Ahl (ed.).
+Creative Computing, 1978.)
+
+<PRE>
+
+
+
+              | 6 | 5 | 4 | 3 | 2 | 1 |
+              |ooo|ooo|ooo|ooo|ooo|ooo|
+        My    |   |   |   |   |   |   |   Your
+       Home   |   |   |   |   |   |   |   Home
+              |ooo|ooo|ooo|ooo|ooo|ooo|
+              | 1 | 2 | 3 | 4 | 5 | 6 |
+
+
+
+
+</PRE>
+
+  Awari is an ancient African game played with seven sticks
+and thirty-six stones or beans laid out as shown above.  The
+board is divided into six compartments or pits on each side.
+In addition, there are two special home pits at the ends.
+
+<P>
+
+  A move is made by taking all of the beans from any (non-empty)
+pit on your own side.  Starting from the pit to the right of
+this one, these beans are 'sown' one in each pit working around
+the board anticlockwise.
+
+<P>
+
+  A turn consists of one or two moves.  If the last bean of
+your move is sown in your own home you make take a second move.
+
+<P>
+
+  If the last bean sown in a move lands in an empty pit,
+provided that the opposite pit is not empty, all the beans in
+the opposite pit, together with the last bean sown are
+'captured' and moved to the player's home.
+
+<P>
+
+  When either side is empty, the game is finished.  The player
+with the most beans in his home has won.
+
+<P>
+
+  In the computer version, the board is printed as 14 numbers
+representing the 14 pits.
+
+<PRE>
+
+
+                      3 3 3 3 3 3
+                   0               0
+                      3 3 3 3 3 3
+
+
+</PRE>
+
+  The pits on your (lower) side are numbered 1-6 from left
+to right.  The pits on my (the computer's) side are numbered
+from my left (your right).
+
+<P>
+
+  To make a move you type in the number of a pit.  If the
+last bean lands in your home, the computer types 'AGAIN?'
+and you then type in your second move.
+
+<P>
+
+  The computer's move is typed, followed by a diagram of the
+board in its new state.  The computer always offers you the
+first move.  This is considered to be a slight advantage.
+
+<P>
+
+  There is a learning mechanism in the program that causes
+the play of the computer to improve as it plays more games.
+
+<P>
+
+  Use the 'break' key sequence (e.g. Ctrl-C on a PC computer)
+to stop execution of the program.
+
+<P>
+
+  The BASIC version of Awari published by Creative Computing
+is adopted from one originally written by Geoff Wyvill of
+Bradford, Yorkshire, England.  The Mouse-2002 version was
+adopted from the BASIC version by David G. Simpson of
+Laurel, Maryland, USA.
+
+<H4><FONT COLOR="#0000FF">Sample Game</FONT></H4>
+
+<PRE>
+
+
+
+                    AWARI
+  CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY
+
+
+
+    3 3 3 3 3 3
+ 0               0
+    3 3 3 3 3 3
+
+YOUR MOVE? 5
+
+    3 3 3 3 3 4
+ 0               1
+    3 3 3 3 0 4
+
+MY MOVE IS 2
+
+    3 4 4 4 0 4
+ 0               1
+    3 3 3 3 0 4
+
+YOUR MOVE? 4
+
+    3 4 4 4 0 4
+ 0               2
+    3 3 3 0 1 5
+
+AGAIN? 1
+
+    3 4 4 0 0 4
+ 0               7
+    0 4 4 0 1 5
+
+MY MOVE IS 4
+
+    0 5 0 0 0 4
+ 6               7
+    0 4 4 0 1 5
+
+YOUR MOVE? 3
+
+    0 5 0 0 0 4
+ 6               8
+    0 4 0 1 2 6
+
+AGAIN? 5
+
+    0 5 0 0 0 4
+ 6               9
+    0 4 0 1 0 7
+
+MY MOVE IS 5
+
+    1 0 0 0 0 4
+ 7               9
+    1 5 1 1 0 7
+
+YOUR MOVE? 2
+
+    1 0 0 0 0 4
+ 7               10
+    1 0 2 2 1 8
+
+AGAIN? 3
+
+    1 0 0 0 0 4
+ 7               10
+    1 0 0 3 2 8
+
+MY MOVE IS 6,1
+
+    0 1 1 1 1 0
+ 8               10
+    1 0 0 3 2 8
+
+YOUR MOVE? 5
+
+    0 1 1 1 1 0
+ 8               11
+    1 0 0 3 0 9
+
+AGAIN? 4
+
+    0 1 1 1 1 0
+ 8               12
+    1 0 0 0 110
+
+MY MOVE IS 5
+
+    0 0 1 1 1 0
+10               12
+    0 0 0 0 110
+
+YOUR MOVE? 6
+
+    1 0 2 2 2 1
+11               15
+    1 0 0 0 1 0
+
+MY MOVE IS 6,4
+
+    0 1 0 2 2 1
+14               15
+    0 0 0 0 1 0
+
+YOUR MOVE? 5
+
+    0 1 0 2 2 0
+14               17
+    0 0 0 0 0 0
+
+
+GAME OVER
+YOU WIN BY 3 POINTS
+
+</PRE>
+
+<P>
+
+<HR>
+
+<H4><FONT COLOR="#0000FF">Contact Information</FONT></H4>
+
+I may be contacted at: <IMG SRC="../name.jpg" ALIGN="CENTER">
+
+</TD>
+
+<TD BGCOLOR=WHITE WIDTH=150 VALIGN=TOP>&nbsp;</TD>    <!-- Gutter -->
+
+</TR>
+
+</TABLE>
+
+<P>
+
+Copyright &copy; 2006 David G. Simpson<BR>
+<BR>
+<TT>http://Mouse.DavidGSimpson.com</TT><BR>
+<ADDRESS>
+Webmaster:  David G. Simpson<BR>
+Page last updated:  February 10, 2007.
+</ADDRESS>
+
+</BODY>
+
+</HTML>
+

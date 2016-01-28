@@ -1,0 +1,55 @@
+~ General test program for Mouse interpreters
+"!Arithmetic Expressions: "
+   777 223 + !   "="  3579 2579 - ! "="
+   25 40 * !     "="  7000 7 / !    "="
+   5137 1379 \ ! "=1000!"
+"Boolean Expressions: "
+   789 891 > !   "=" 0 17 - 36 > !  "="  ~ False expressions
+   0 1 = ! "="   0 1000 - 1000 = !  "="
+   6 5 < ! "=" 1000 0 1000 - < !    "="
+   17 18 > 5 5 = * ! "="
+   17 18 > 5 6 > + ! "=0    "
+   1 0 > ! "=" 0 0 1 - > !   "="         ~ True expressions
+   0 0 = ! "=" 1000 1000 = ! "="
+   0 17 - 37 < ! "=" 0 1 < ! "="
+   17 18 < 6 5 > * ! "="
+   5 6 > 1 1 = + ! "=1!"
+"Assignments: "
+   1000 A: A. ! "=" A. Z: Z. ! "="
+   A 25 + . ! "=1000!"
+"Conditional Statements: "
+   1 0 > [ "OK" ]
+   1 0 = [ " *** Error ***" ] "!"
+"Loops: "
+   0 N:
+   ( N. ! " " N. 10 < ^ N. 1 + N: )
+   "!!   "
+   0 M:                                  ~ Multiplication table
+   ( 0 N:
+      ( M. N. * ! " "
+         N. 5 < ^ N. 1 + N: )
+   "!   " M. 5 < ^ M. 1 + M: ) "!"
+"Macro Calls: "
+   " A: " #A; "!"
+"Parameters: "
+   " B: "  #B,"OK"; #B," OK"," *** Error ***";
+   " C: "  #C,1,2,3,4; ! "=10"
+   " D: "  #D,#D,1,2;,#D,3,4;; ! "=10!"
+"Scope of Variables: "
+   " E: "  #E,1000,#F,0;; "!"
+"Recursive Macros: "
+   " G: "  #G,4410; "!"
+"End of tests.!"
+~ Macro definitions
+$A "OK" @
+$B 1% @
+$C 1% 2% 3% 4% + + + @           ~ Place sum of four parameters on stack
+$D 1% 2% + @                     ~ Place sum of two parameters on stack
+$E 1% x: x. 2% x. ! "=" ! @      ~ Scope of variables test
+$F 1% x: @                       ~ Should not change the x in $E
+$G 1% n: 2 f:                    ~ Display prime factors of 1%
+   ( n. f. \ 0 > ^ f. 1 + f: )   ~ f is now smallest factor of n
+   f. n. <
+   [ f. ! " "                    ~ Display f
+      #G,n. f. /; ] @            ~ Find prime factors of n/f
+~ End of definitions

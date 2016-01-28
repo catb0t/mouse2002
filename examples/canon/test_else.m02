@@ -1,0 +1,103 @@
+~ Test of else symbol |
+
+~ if B then S
+
+0 [ "Error-A  " ]
+1 [ "OK-1  " ]
+"!"
+
+~  if B then
+~     S
+~  else
+~     T
+
+0 [ "Error-B  " | "OK-2  " ]
+1 [ "OK-3  " | "Error-C  " ]
+"!"
+
+~  if B then
+~     if C then
+~        S
+~     else
+~        T
+
+0 [ 0 [ "Error-D  " | "Error-E  " ] ]
+0 [ 1 [ "Error-F  " | "Error-G  " ] ]
+1 [ 0 [ "Error-H  " | "OK-4  " ] ]
+1 [ 1 [ "OK-5  " | "Error-I  " ] ]
+"!"
+
+~  if B then
+~     if C then
+~        S
+~  else
+~     T
+
+0 [ 0 [ "Error-J  " ] | "OK-6  " ]
+0 [ 1 [ "Error-K  " ] | "OK-7  " ]
+1 [ 0 [ "Error-L  " ] | "Error-M  " ]
+1 [ 1 [ "OK-8  " ] | "Error-N  " ]
+"!"
+
+~  if B then
+~     S
+~  else
+~     if C then
+~        T
+
+0 [ "Error-O  " | 0 [ "Error-P  " ] ]
+0 [ | 1 [ "OK-9  " ] ]
+1 [ "OK-10  " | 0 [ "Error-Q  " ] ]
+1 [ "OK-11  " | 1 [ "Error-R  " ] ]
+"!"
+
+~  if B then
+~     if C then
+~        S
+~     else
+~        T
+~  else
+~     U
+
+0 [ 0 [ "Error-S  " | "Error-T  " ] | "Error-U  " ]
+0 [ 1 [ "Error-V  " | "Error-W  " ] | "Error-X  " ]
+1 [ 0 [ "Error-Y  " | "OK-12  " ] | "Error-Z  " ]
+1 [ 1 [ "OK-13  " | "Error-AA  " ] | "Error-AB  " ]
+"!"
+
+~  if B then
+~     S
+~  else
+~     if C then
+~        T
+~     else
+~        U
+
+0 [ "Error-AC  " | 0 [ "Error-AD  " | "OK-14  " ] ]
+0 [ "Error-AE  " | 1 [ "OK-15  " | "Error-AF  " ] ]
+1 [ "OK-16  " | 0 [ "Error-AG  " | "Error-AH  " ] ]
+1 [ "OK-17  " | 1 [ "Error-AI  " | "Error-AJ  " ] ]
+"!"
+
+~ case statement:
+~
+~  B [             if B then
+~     S               S
+~  | C [           else if C then
+~     T               T
+~  | D [           else if D then
+~     U               U
+~  | V             else V            (this line optional - default clause)
+~  ] ] ]
+
+0 [ "Error-AK  " | 0 [ "Error-AL  " | 0 [ "Error-AM  " ] ] ]
+0 [ "Error-AN  " | 0 [ "Error-AO  " | 1 [ "OK-18  " ] ] ]
+0 [ "Error-AP  " | 1 [ "OK-19  " | 0 [ "Error-AQ  " ] ] ]
+0 [ "Error-AR  " | 1 [ "OK-20  " | 1 [ "Error-AS  " ] ] ]
+1 [ "OK-21  " | 0 [ "Error-AT  " | 0 [ "Error-AU  " ] ] ]
+1 [ "OK-22  " | 0 [ "Error-AV  " | 1 [ "Error-AW  " ] ] ]
+1 [ "OK-23  " | 1 [ "Error-AX  " | 0 [ "Error-AY  " ] ] ]
+1 [ "OK-24  " | 1 [ "Error-AZ  " | 1 [ "Error-BA  " ] ] ]
+0 [ "Error-BB  " | 0 [ "Error-BC  " | 0 [ "Error-BD  " | "OK-25  "] ] ]
+"!"
+$

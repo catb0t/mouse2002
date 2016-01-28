@@ -1,0 +1,32 @@
+~ what's the time, chap?
+
+0 &FIX    ~ set display mode
+2 &WIDTH
+
+
+"!What's the time, chap?!"
+
+(
+  27!' "[0;37m" ~ set color
+
+  "It's "
+  &HOUR x:
+  x. &!DEC
+  ":"
+  &MIN &!DEC
+  ":"
+  &SEC &!DEC
+  x. 12 < [
+    "a.m."
+  | "p.m."
+  ]
+  #B;
+)
+
+$B
+  8 !' 8 !' 8 !' 8 !'
+  8 !' 8 !' 8 !' 8 !'
+  8 !' 8 !' 8 !' 8 !'  ~ backspace 8 spaces
+  8 !' 8 !' 8 !' 8 !'
+  8 !'
+@

@@ -1,0 +1,8 @@
+~ Type file mouse.001 to the terminal
+1 0 &FOPEN                   ~ open file mouse.001
+(                            ~ start of loop
+   1 &F?' 1 &FEOF 0= ^       ~ read character; repeat while not eof
+   !'                        ~ print character to terminal
+)                            ~ end of loop
+1 &FCLOSE                    ~ close file mouse.001
+$                            ~ end of program

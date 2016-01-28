@@ -1,0 +1,9 @@
+~ Test of factorial function
+0 &FIX
+0 i:
+(
+   i. 21 < ^
+   2 &WIDTH i. ! 33 !' "  =  " 1 &WIDTH i. &FACT ! "!"
+   i. 1+ i:
+)
+$

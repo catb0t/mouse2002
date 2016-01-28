@@ -1,0 +1,15 @@
+~ interpret curly
+
+? l:
+9 0 &FOPEN
+(
+  i l. < ^
+
+  9 &F?' c:
+  c. 123 = i. 0 = *
+  [
+
+  ]
+
+  i. 1 + i:
+)

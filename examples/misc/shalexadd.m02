@@ -1,0 +1,14 @@
+~ shorter alexadd in mouse.
+
+&TIME &SEED               ~ painfully obvious
+
+? ?                       ~ get some input
+&RAND 10 * &INT 8 >       ~ get a random number 0-1 * 10, make it an int & check if >8
+[                         ~ if true
+  + 1 + !                 ~ add the input then add 1 and print
+|                         ~ else
+  + !                     ~ add and print
+]                         ~ endif
+
+~ Golfed:
+~ &TIME &SEED ?? &RAND 10* &INT 8>[+1+!|+!]

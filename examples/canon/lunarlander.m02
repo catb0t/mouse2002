@@ -1,0 +1,59 @@
+"!"
+"     ___    !"
+"    /...\   !"
+"   /.=.=.\  !"
+"   |_____|  !"
+"   _/ | \_  !"
+"            !"
+"Lunar Lander!"
+"!"
+
+1000  F:   ~Fuel
+100   A:   ~Altitude
+100   R:   ~Range
+0     I:   ~Horizontal Velocity
+0     J:   ~Vertical Velocity
+0 3 - G:   ~Gravity
+
+(
+   "!"
+   "### Alt=" A.! " Range=" R.! " Fuel=" F.!
+   " HV=" I.! " VV=" J.! " Grav=" G.! " ###!"
+
+   F.                      ~if there is fuel left
+   [
+      "Horizontal Thrust? "
+      ? H:
+      "Vertical Thrust? "
+      ? V:
+   ]
+   F. 0 =                  ~if out of fuel
+   [
+      "Out of fuel.!"      ~then no thrust
+      0 H:
+      0 V:
+   ]
+   I. H. + I:              ~Horizontal Accel
+   J. G. + V. + J:         ~Vertical Accel
+   A. J. + A:              ~Adjust Altitude
+   R. I. + R:              ~Adjust Range
+                           ~take abs val of h and v
+   H. 0 <                  ~if h < 0
+   [
+      0 H. - H:            ~then h = - h
+   ]
+   V. 0 <                  ~if v < 0
+   [
+      0 V. - V:            ~then v = -v
+   ]
+   F. V. H. - - F:         ~fuel = fuel - v - h
+   A. 0 <                  ~if altitude < 0
+   [
+      "!!### You landed with!"
+      "a horizontal velocity of " I.! "!"
+      "a vertical velocity of " J.! "!"
+      R.! " meters from the landing pad.!"
+      0 ^
+   ]
+)
+$

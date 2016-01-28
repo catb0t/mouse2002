@@ -1,0 +1,37 @@
+~ A Numerical Integration (Area-Finding) Program for
+~ the Computer (in Mouse).
+
+~ Adapted from "How to Enjoy Calculus" (Rev. Ed.) by Eli S. Pine
+~ Mouse version by D. Simpson 5/14/02
+
+~ Simpson's rule
+~ Macro S defines the function
+~ Variables F and T hold the lower and upper limits of integration,
+~ respectively.
+
+0 F:                         ~ lower limit of integration
+2 T:                         ~ upper limit of integration
+
+"# of increments? "
+? I:
+T. F. - I. / W:
+#S,F.; B:
+
+1 C:
+(  C. I. < ^
+   C. W. * F. + X:
+   C. 2 / &dup &int =
+      [
+         2 #S,X.; * B. + B:
+      |
+         4 #S,X.; * B. + B:
+      ]
+   C. 1 + C:
+)
+
+B. #S,T.; + B:
+B. W. 3 / * A:
+"Area is: " A. !
+
+$S 1% &sqr @                 ~ Function Y = X**2
+

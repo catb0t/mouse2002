@@ -1,0 +1,22 @@
+~ Convert Gregorian date to Julian day.
+
+4 &fix
+
+"Enter year:  " ? y:
+"Enter month: " ? m:
+"Enter day:   " ? d:
+
+m. 3 <
+   [
+   y. 1- y:
+   m. 12 + m:
+   ]
+
+y. 100 / &INT a:
+2 a. - a. 4 / &INT + b:
+y. 4716 + 365.25 * &INT
+m. 1+ 30.6001 * &INT +
+d. + b. + 1524.5 -
+
+"!JD = " !
+$

@@ -1,0 +1,5 @@
+2 n:
+"The square root of " n.! " is " n. &SQRT ! "!"
+"More digits: "
+8 &FIX n. &SQRT !
+$

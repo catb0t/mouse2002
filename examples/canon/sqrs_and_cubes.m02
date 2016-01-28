@@ -1,0 +1,7 @@
+"SQUARE AND TRIANGULAR NUMBERS!"
+( "ENTER A NUMBER: " ? N: N. ^
+      "S(" N. ! ") = " #S,N.; !
+    "  T(" N. ! ") = " #T,N.; ! "!" )
+
+$S 1% 1 - [ #T,1%; #T,1% 1 -; + @ ] 1 @
+$T 1% 1 - [ #S,1% 1 -; 3 1% * 1 - + 2 / @ ] 1 @

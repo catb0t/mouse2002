@@ -1,0 +1,7 @@
+~ Test of &CUBE, &CUBERT, &4TH, &4THROOT
+
+2 &CUBE ! "=8!"
+8 &CUBERT ! "=2!"
+2 &4TH ! "=16!"
+16 &4THRT ! "=2!"
+$

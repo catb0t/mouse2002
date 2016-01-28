@@ -1,0 +1,5 @@
+0 X:
+( 0 Y:
+  ( X. Y. * ! " "                            ~ Display a multiplication table
+    Y. 10 - 0 < ^ Y. 1 + Y: )                ~ for numbers up to 10
+    "!" X. 10 - 0 < ^ X. 1 + X: ) $

@@ -1,0 +1,21 @@
+"Legen... wait for it... "
+
+&HOUR 1+ x:
+(
+  &HOUR x. =
+  [
+    #B;
+    "dary" 33!'
+    "!"
+    0^
+  ]
+  &MIN 59 - &ABS !
+  ":"
+  &SEC 59 - &ABS !
+  #B;
+)
+$B 8!' 8 !' 8 !' 8 !' 8 !'@
+$
+
+~ Golfed:
+~ "Legen... wait for it..."?&HOUR 1+ x:(&HOUR x.=["dary"33!'0^])

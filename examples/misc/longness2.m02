@@ -1,0 +1,17 @@
+~ generates output a multiple of its length.
+
+? &DUP        ~ get some input; dup it
+0 =           ~ if 0
+[             ~ then
+  2           ~ push 2 instead
+]             ~ fi
+69 * y:       ~ push 69* and assign into y
+(             ~ while(true)
+  y. x. > ^   ~ cmp
+  1 !         ~ print a 1
+  x. 1 + x:   ~ increment x
+)             ~ endwhile
+$             ~ (implicit) end prog
+
+~ Golfed:
+~ ?&DUP 0=[1]69*y:(y.x.>^1!x.1+x:)

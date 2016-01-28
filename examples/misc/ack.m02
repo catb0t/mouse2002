@@ -1,0 +1,29 @@
+~ Ackermann function in Mouse.
+~ A(0,n) = n+1
+~ A(m,0) = A(m-1,1)
+~ A(m,n) = A(m-1,A(m,n-1))
+
+~ out-of-memory!
+
+"M>" ? a:
+"N>" ? b:
+
+#Y, a. b.;!
+
+$Y 1% n: 2% m: ~ ack
+  m. 0 = k: ~ store whether m == 0 in k
+  n. 0 = j:
+  j. k. > [ ~ if y>x
+    n.1+ ~ print it
+  | j. k. < [ ~ if x>y
+    #Y, m. 1-, 1;
+  | #Y, m. 1-, #Y, m.,n. 1-;;!
+    ]
+   ]
+  ]
+@
+
+$
+
+~ Golfed:
+~ "M>"?a:"N>"?b:#Y,a.b.;$Y1%n:2%m:m.0=k:n.0=j:j.k.>[n.1+!|j.k.<[#Y,m.1-,1;!|#Y,m.1-,#Y,n.,n.1-;;!]]]@

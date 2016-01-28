@@ -1,0 +1,6 @@
+~ 91 function - returns 91 for any argument < 101
+"Enter a number: " ? N:
+#G,N.; !
+
+$G 1% x: x. 100 > [ x. 10 - @ ]
+  #G,#G,x. 11 + ;; @

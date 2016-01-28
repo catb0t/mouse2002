@@ -1,0 +1,8 @@
+"Test Display!"
+2 &SQRT x:
+2 &FIX x. ! "!"
+6 &FIX x. ! "!"
+2 &SCI x. ! "!"
+6 &SCI x. ! "!"
+"Done."
+$

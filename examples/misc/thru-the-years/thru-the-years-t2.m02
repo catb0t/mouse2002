@@ -1,0 +1,15 @@
+?X:X.2\0=[
+  "number must be odd"
+  33!' "!"
+  &EXIT
+]
+X.1=[
+  "N"
+| 3 [
+  "N N!NNN!N N!"
+ ]
+]
+
+$N
+
+$

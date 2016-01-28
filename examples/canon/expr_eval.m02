@@ -1,0 +1,32 @@
+~ Expression evaluation
+( "!: " #G,c; 1 c. '. = - ^
+   #E,c; ! )
+$E #T,1%;                      ~ Evaluate an expression
+   1%. '+ =
+      [ #G,1%; #E,1%; + @ ]
+   1%. '- =
+      [ #G,1%; #E,1%; - @ ] @
+$T #F,1%;                      ~ Evaluate a term
+   1%. '* =
+      [ #G,1%; #T,1%; * @ ]
+   1%. '/ =
+      [ #G,1%; #T,1%; / @ ]
+   1%. '\ =
+      [ #G,1%; #T,1%; \ @ ] @
+$F #D,1%;                      ~ Evaluate a factor
+      [ #N,1%; @ ]
+   1%. '( =
+      [ #G,1%; #E,1%;
+         1%. ') =
+            [ #G,1%; @ ]
+         "!) expected" @ ]
+   " Illegal character!:" 0 @
+$N 1%. '0 -                    ~ Convert digit string to number
+   ( #G,1%; #D,1%; ^
+      10 * 1%. '0 - + ) @
+$D 1%. x:                      ~ Digit test
+   x. '0 1 - >
+   x. '9 1 + < * @
+$G ( ?' x: x. ' =              ~ Get a non-blank character
+   x. 13 = + x. 10 = + ^ )
+   x. 1%: @

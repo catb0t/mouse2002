@@ -1,0 +1,15 @@
+~ 99 bottles of beer in Mouse.
+
+99I:
+(
+  I.0>^
+  I.1=[
+    "1 bottle of beer on the wall, 1 bottle of beer.!Go to the store and buy some more, 99 bottles of beer on the wall.!"
+  | I.!" bottles of beer on the wall, "I.!" bottles of beer.!Take one down and pass it around, "I.1-!" bottles of beer on the wall.!!"
+  ]
+  I.1-I:
+)
+$
+
+~ Golfed:
+~ 99I:(I.0>^I.1=["1 bottle of beer on the wall, 1 bottle of beer.!Go to the store and buy some more, 99 bottles of beer on the wall.!"|I.!" bottles of beer on the wall, "I.!" bottles of beer.!Take one down and pass it around, "I.1-!" bottles of beer on the wall.!!"]I.1-I:)$

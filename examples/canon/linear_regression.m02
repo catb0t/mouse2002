@@ -1,0 +1,59 @@
+~ *****************************************************************************
+~
+~                             L I N R E G
+~
+~   Program:      LINREG
+~
+~   Programmer:   Dr. David G. Simpson
+~                 Department of Physical Science
+~                 Prince George's Community College
+~                 Largo, Maryland  20774
+~
+~   Date:         February 9, 2002
+~
+~   Language:     Mouse
+~
+~   Description:  This program performs a linear regression analysis for a set
+~                 of data given as (x,y) pairs.  The output from the program
+~                 is the slope and y-intercept of the least-squares best-fit
+~                 straight line through the data points.
+~
+~ *****************************************************************************
+
+"LINREG - Perform linear regression!"
+"  (Enter X=-9999 to stop data entry and compute linear regression.)!"
+
+~ Initialize sums
+
+0 N:                                        ~ number of data points
+0 A:                                        ~ sum of x
+0 C:                                        ~ sum of x**2
+0 D:                                        ~ sum of x * y
+0 E:                                        ~ sum of y
+0 F:                                        ~ sum of y**2
+
+~ Start of data entry loop
+
+(  "!Enter X:  " ? X:                       ~ read in X value
+   X. 0 9999 - = 0= ^                       ~ check for X=-9999
+      "Enter Y:  " ? Y:                     ~ while not, read in Y
+      N. 1 + N:                             ~ increment number of data points
+      A. X. + A:                            ~ update sum of x
+      C. X. X. * + C:                       ~ update sum of x**2
+      D. X. Y. * + D:                       ~ update sum of x * y
+      E. Y. + E:                            ~ update sum of y
+      F. Y. Y. * + F:                       ~ update sum of y**2
+)
+
+~ Compute slope (M) and y-intercept (B)
+
+N. C. * A. A. * - Z:                        ~ denominator
+N. D. * A. E. * - Z. / M:                   ~ slope
+E. C. * A. D. * - Z. / B:                   ~ y-intercept
+
+~ Print results
+
+"!Slope        m = " M. !
+"!y-intercept  b = " B. ! "!"
+
+$                                           ~ end of program

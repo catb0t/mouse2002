@@ -1,0 +1,5 @@
+? N:                  ~ Read a number
+1 P:
+( P. 1 + P:           ~ find its smallest prime factor
+  N. P. \ 0 > ^ )
+P. ! $                ~ and display it

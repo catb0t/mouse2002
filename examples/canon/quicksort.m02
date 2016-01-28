@@ -1,0 +1,31 @@
+~ Quicksort using pointers
+#S,a;                          ~ Numbers to be sorted are stored
+                               ~ in the array "a"
+$S "Enter numbers to be sorted (0 terminates):!"
+   1% 1 - p:                   ~ Initialize pointer to array
+   ( ? n: n. 0 > ^             ~ Read a number and check it
+      p. 1 + p: n.p.: )        ~ Increment pointer and store number
+   "!"
+   #Q,1%,p.;                   ~ Sort the array
+   "Sorted array:!"
+   1% q:                       ~ Set pointer for output
+   ( q.. ! " "                 ~ Display one number
+      q. p. < ^                ~ Check finished
+      q. 1 + q: )              ~ Increment pointer and loop
+   "!" @
+$Q 1% i:                       ~ Set pointers to beginning,
+   2% j:                       ~     end,
+   i. j. + 2 / . m:            ~        and middle component
+   ( ( i.. m. < ^
+      i. 1 + i: )
+   ( m. j.. < ^
+      j. 1 - j: )
+   i. j. 1 + <
+      [ i.. j.. i.: j.:        ~ Swap array components
+         i. 1 + i:             ~ Update pointers
+         j. 1 - j: ]
+   i. j. 1 + < ^ )
+   1% j. <
+      [ #Q,1%,j.; ]            ~ Sort left end
+   i. 2% <
+      [ #Q,i.,2%;] @           ~ Sort right end

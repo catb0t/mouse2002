@@ -1,0 +1,20 @@
+~ Bubble sort: demonstration of pointers
+"!Enter numbers to be sorted (0 terminates): "
+A 1 -Z:                           ~ Set pointer Z
+(? X: X. 0> ^                     ~ Read number and check > 0
+   Z. 1 + Z: X. Z.: )             ~ Increment pointer and store number
+Z. X:                             ~ Set bound for first scan
+( X. Y: 0 X: A W:                 ~ Prepare for scan
+   ( W. Y. < ^                    ~ Scan until bound reached
+      W. . W. 1 + . >             ~ Compare two components
+         [ W. . W. 1 + .          ~ Swap them
+           W.: W. 1 + :
+           W. X: ]                ~ Update bound
+      W. 1 + W: )                 ~ Advance pointer
+   X. A > ^)                      ~ Continue if a swap occurred
+"!Sorted array: "
+A X:                              ~ Set pointer
+( X. . ! " "                      ~ Display one item
+   X. Z. < ^                      ~ Check if done
+   X. 1 + X: )                    ~ Advance pointer
+$

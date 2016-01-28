@@ -1,0 +1,102 @@
+~*******************************************************************************
+~
+~                             S L U N A R
+~
+~  Program:      SLUNAR
+~
+~  Programmer:   Dr. David G. Simpson
+~                NASA Goddard Space Flight Center
+~                Greenbelt, Maryland  20771
+~
+~  Date:         August 12, 2004
+~
+~  Language:     Mouse-2002
+~
+~  Version:      1.00b
+~
+~  Description:  This program implements a simple lunar ephemeris model.
+~                The resulting lunar coordinates are referred to the
+~                mean equator and equinox of epoch J2000.  (See
+~                'An Alternative Lunar Ephemeris Model for On-Board
+~                Flight Software Use', D.G. Simpson, Proceedings of
+~                the 1999 NASA/GSFC Flight Mechanics Symposium,
+~                pp. 175-184.)
+~
+~*******************************************************************************
+
+~-------------------------------------------------------------------------------
+~
+~  Variables.
+~
+~ J       Input time (ephemeris Julian day)
+~ T       Time in Julian centuries from J2000
+~ X,Y,Z   Lunar J2000 cartesian coordinates (km)
+~ R       Lunar J2000 right ascension (deg)
+~ D       Lunar J2000 declination (deg)
+~
+~-------------------------------------------------------------------------------
+
+      1 &FIX                                ~ set display mode
+
+      "Enter time (JDE): "                  ~ read input time (JDE)
+      ? J:
+
+      J. 2451545.0 - 36525 / T:             ~ Julian centuries from J2000
+
+~
+~     Compute lunar J2000 cartesian coordinates.
+~
+
+      T.  8399.685 * 5.381 + &SIN 383.0 *   ~ X
+      T.    70.990 * 6.169 + &SIN  31.5 * +
+      T. 16728.377 * 1.453 + &SIN  10.6 * +
+      T.  1185.622 * 0.481 + &SIN   6.2 * +
+      T.  7143.070 * 5.017 + &SIN   3.2 * +
+      T. 15613.745 * 0.857 + &SIN   2.3 * +
+      T.  8467.263 * 1.010 + &SIN   0.8 * +
+      1000 * X:
+
+      T.  8399.687 * 3.811 + &SIN 351.0 *   ~ Y
+      T.    70.997 * 4.596 + &SIN  28.9 * +
+      T.  8433.466 * 4.766 + &SIN  13.7 * +
+      T. 16728.380 * 6.165 + &SIN   9.7 * +
+      T.  1185.667 * 5.164 + &SIN   5.7 * +
+      T.  7143.058 * 0.300 + &SIN   2.9 * +
+      T. 15613.755 * 5.565 + &SIN   2.1 * +
+      1000 * Y:
+
+      T.  8399.672 * 3.807 + &SIN 153.2 *   ~ Z
+      T.  8433.464 * 1.629 + &SIN  31.5 * +
+      T.    70.996 * 4.595 + &SIN  12.5 * +
+      T. 16728.364 * 6.162 + &SIN   4.2 * +
+      T.  1185.645 * 5.167 + &SIN   2.5 * +
+      T.   104.881 * 2.555 + &SIN   3.0 * +
+      T.  8399.116 * 6.248 + &SIN   1.8 * +
+      1000 * Z:
+
+~
+~     Print results.
+~
+
+      "!Lunar J2000 equatorial coordinates:!!"
+      "X = " X. ! " km!"
+      "Y = " Y. ! " km!"
+      "Z = " Z. ! " km!"
+
+~
+~     Compute right ascension and declination.
+~
+
+      Y. X. &ATAN2 &R>D R:
+      R. 0 < [R. 360 + R:]
+
+      Z. X. X. * Y. Y. * + Z. Z. * + &SQRT / &ASIN &R>D D:
+
+~
+~     Print results.
+~
+
+      "RA  = " R. ! " deg!"
+      "Dec = " D. ! " deg!"
+
+      $

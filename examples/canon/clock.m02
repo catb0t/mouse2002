@@ -1,0 +1,13 @@
+~ Simple clock - displays the current time from the system clock
+
+0 &FIX                                        ~ set display mode
+"!"
+(                                             ~ loop forever
+   #Z,&HOUR; ! ":" #Z,&MIN; ! ":" #Z,&SEC; !  ~ print time
+   #B;                                        ~ backspace to column 1
+)
+
+$B 8 !' 8 !' 8 !' 8 !'                        ~ backspace 8 spaces
+   8 !' 8 !' 8 !' 8 !' @
+
+$Z 1% 10 < [ "0" ] 1% @                       ~ print leading zero if <10

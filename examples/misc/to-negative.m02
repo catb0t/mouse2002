@@ -1,0 +1,11 @@
+~ apply a function to a function such that f(f(n)) == neg(n)
+
+#A,#A,?;;
+
+$A1%x:
+  x. [x._!
+  |x.!]
+$
+
+~ Golfed
+~ $A1%x:x.[x._!|x.!]$

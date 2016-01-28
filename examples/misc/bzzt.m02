@@ -1,0 +1,19 @@
+~ bzzt! in mouse
+
+(             ~ while true
+  x. 501 < ^  ~ push x; push 1 if less than 501 and break if 0
+  x. d \      ~ push x mod 3
+  [           ~ if 0; then
+    x. ! J!'  ~ push x and print, push the ascii code 9 and print
+  |           ~ else
+    "bzzt!"   ~ print this string
+  ]           ~ endif
+  x. b+ x:    ~ push x, increment by 1
+)             ~ endwhile
+$             ~ (implicit for scripts) end prog
+
+~ Golfed:
+~ (x.501<^x.d\[x.!j!'|"bzzt!"]x.b+x:)
+
+~ newmouse:
+~ (x501<^xd\[x.|"bzzt".]1!x+)

@@ -1,0 +1,181 @@
+~ ****************************************************************************
+~
+~                            C O M P L E X
+~
+~  Program:      COMPLEX
+~
+~  Programmer:   Dr. David G. Simpson
+~                Laurel, Maryland  USA
+~
+~  Date:         April 24, 2002
+~
+~  Language:     Mouse-02
+~
+~  Description:  This file contains a collection of macros that may be used to
+~                do complex arithmetic in Mouse.  Also included is a short
+~                test program that runs each of the macros.
+~
+~  Notes:
+~
+~      Two complex numbers z1 and z2 are defined as
+~
+~             z1 = iy1 + x1 ,
+~             z2 = iy2 + x2 ,
+~
+~      where i = sqrt(-1).  To use the complex number macros below, complex
+~      numbers should be loaded on the stack with the imaginary component
+~      first:
+~
+~           Unary:    y1 x1  <macro>          performs function on z1
+~           Binary:   y1 x1 y2 x2  <macro>    performs z1 <op> z2
+~
+~       For example,
+~
+~           2 3 4 7
+~
+~       Loads the stack with z1 = 2i + 3 and z2 = 4i + 7.
+~
+~       Local variables are often used within the macros to save the
+~       coefficients.  The local variable naming convention is:
+~
+~              x = x1
+~              y = y1
+~              a = x2
+~              b = y2
+~
+~  In each of the tests below, z1 = 2i + 3, and z2 (if present) = 4i + 7.
+~
+~  The macros defined are:
+~
+~      A    Complex +
+~      S    Complex -
+~      M    Complex *
+~      D    Complex /
+~      R    Complex reciprocal
+~      J    Complex conjugate
+~      N    Complex negate
+~      E    Complex exp
+~      L    Complex ln
+~      I    Complex sin
+~      C    Complex cos
+~      T    Complex tan
+~      Z    Complex exponentiation
+~
+~ ****************************************************************************
+
+&RAD                                        ~ set angle mode to radians
+4 &FIX                                      ~ set display mode
+
+"!Test of complex number macros!!"
+
+"z1 = 3 + 2i!z2 = 7 + 4i!!"
+
+"A:  " 2 3 4 7 #A; "z1 + z2 = " #P;         ~ test complex +
+"S:  " 2 3 4 7 #S; "z1 - z2 = " #P;         ~ test complex -
+"M:  " 2 3 4 7 #M; "z1 * z2 = " #P;         ~ test complex *
+"D:  " 2 3 4 7 #D; "z2 / z2 = " #P;         ~ test complex /
+"R:  " 2 3 #R; "1/z1 = " #P;                ~ test complex reciprocal
+"J:  " 2 3 #J; "conj(z1) = " #P;            ~ test complex conjugate
+"N:  " 2 3 #N; "-z1 = " #P;                 ~ test complex negate
+"E:  " 2 3 #E; "exp(z1) = " #P;             ~ test complex exp
+"L:  " 2 3 #L; "ln(z1) = " #P;              ~ test complex ln
+"I:  " 2 3 #I; "sin(z1) = " #P;             ~ test complex sin
+"C:  " 2 3 #C; "cos(z1) = " #P;             ~ test complex cos
+"T:  " 2 3 #T; "tan(z1) = " #P;             ~ test complex tan
+"Z:  " 2 3 4 7 #Z; "z1**z2 = " #P;          ~ test complex exponentiation
+"(-i)**i = " 1_ 0 1 0 #Z; #P;               ~ another test of complex exponentiation
+
+
+
+~ ****************************************************************************
+~   Macro definitions
+~ ****************************************************************************
+
+
+$A                                          ~ complex +
+   &ROT + &ROT &ROT + &SWAP
+@
+
+
+$S
+   &ROT - _ &ROT &ROT - &SWAP               ~ complex -
+@
+
+
+$M                                          ~ complex *
+   a: b: x: y:
+   x. b. * a. y. * +
+   x. a. * y. b. * -
+@
+
+
+$D                                          ~ complex /
+   a: b: x: y:
+   a. &SQR b. &SQR + r:
+   a. y. * x. b. * - r. /
+   x. a. * y. b. * + r. /
+@
+
+
+$R                                          ~ complex reciprocal
+   x: y: 0 1 y. x. #D;
+@
+
+
+$J                                          ~ complex conjugate
+   &SWAP _ &SWAP
+@
+
+
+$N                                          ~ complex negate
+   &SWAP _ &SWAP _
+@
+
+
+$E                                          ~ complex exp
+   x: y:
+   x. &EXP &DUP y. &SIN *
+   &SWAP y. &COS *
+@
+
+
+$L                                          ~ complex ln
+   x: y:
+   y. x. &ATAN2
+   x. &SQR y. &SQR + &LN 2 /
+@
+
+
+$I                                          ~ complex sin
+   x: y:
+   x. y._ #E;
+   x._ y. #E; #S;
+   2 0 #D;
+@
+
+
+$C                                          ~ complex cos
+   x: y:
+   x. y._ #E;
+   x._ y. #E; #A;
+   0 2 #D;
+@
+
+
+$T                                          ~ complex tan
+   x: y:
+   y. x. #I;
+   y. x. #C; #D;
+@
+
+
+$Z                                          ~ complex exponentiation
+   a: b: x: y:
+   y. x. #L;
+   b. a. #M; #E;
+@
+
+
+$P                                          ~ print complex number
+   ! " " &DUP 0 > [ "+" ] " " ! " i!"
+@

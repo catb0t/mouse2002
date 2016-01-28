@@ -1,0 +1,10 @@
+~
+~ Exercise 4.2 from Grogono's book
+~
+"Enter two numbers: "                       ~ prompt for numbers
+? ?                                         ~ read in two numbers
+B: A:                                       ~ save numbers in A and B
+A. B. < [ "the first number is less than the second number" ]
+A. B. = [ "the first number is equal to the second number" ]
+A. B. > [ "the first number is greater than the second number" ]
+$

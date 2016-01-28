@@ -1,0 +1,29 @@
+~ MacDonald's Farm
+
+( "!!How many verses? " ? N: N. 0> ^ #S,1,N.;)
+
+   $S "!!" #V,0; ",!And on this farm he had some "
+      #W,1%; #R; ",!With a " #V,1%; "."
+      1% 2% < [ #S,1% 1+,2%; ] @
+
+   $V 1% 0 = [ "Old MacDonald had a farm" #R; @ ]
+      #A,#M,1%;,#N,1%;; "!" #V,1% 1-; @
+
+   $A #C,1%,2%; "!" #B,"H",1%; #B,"th",2%; #B,"everywh",
+   1% " " 2%; @
+
+$B 1% "ere a " 2% "," @
+
+$C 1% " " 2% " here and a " 1% " " 2% " there," @
+
+$R ", ee-igh, ee-igh, oh" @
+
+$M 1% 1 = [ "Chick" @ ]    1% 2 = [ "Quack" @ ]
+   1% 3 = [ "Gobble" @ ]   1% 4 = [ "Oink" @ ]
+   1% 5 = [ "Moo" @ ]      1% 6 = [ "Hee" @ ] @
+
+$N 1% 6 < [ #M,1%; @ ] "Haw" @
+
+$W 1% 1 = [ "chicks" @ ]    1% 2 = [ "ducks" @ ]
+   1% 3 = [ "turkeys" @ ]   1% 4 = [ "pigs" @ ]
+   1% 5 = [ "cows" @ ]      1% 6 = [ "donkeys" @ ] @
