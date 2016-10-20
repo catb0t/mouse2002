@@ -1,0 +1,78 @@
+~ 0 if score is 1, output "Hole in one"
+~ 1 if score == par - 4 and par > 5, output "Condor"    ~ ex 3, 7
+~ 2 if score == par - 3 and par > 4, output "Albatross"
+~ 3 if score == par - 2 and par > 3, output "Eagle"
+~ 4 if score == par - 1, output "Birdie"
+~ 5 if score == par, output "Par"
+~ 6 if score == par + 1, output "Bogey"
+~ 7 if score == par + 2, output "Double Bogey"
+~ 8 if score == par + 3, output "Triple Bogey"
+~ 9 if score > par + 3, output "Haha you loser"
+
+? s: ? p:
+
+s. p. + 4 + x:
+
+s. 1 = [
+  "Hole in one"
+]
+
+s. p. - 4 0 = [
+  "Par"
+]
+
+
+
+$
+
+~ 0
+s. 1 = [
+  "Hole in one"
+]
+
+~ 1
+s. p. 4 - = p. 5 > [
+  "Condor"
+]
+
+~ 2
+s. p. 3 - = p. 4 > [
+  "Albatross"
+]
+
+~ 3
+s. p. 2 - = p. 3 > [
+  "Eagle"
+]
+
+~ 4
+s. p. 1 - = [
+  "Birdie"
+]
+
+~ 5
+s. p. = [
+  "Par"
+]
+
+~ 6
+s. p. 1 + = [
+  "Bogey"
+]
+
+~ 7
+s. p. 2 + = [
+  "Double Bogey"
+]
+
+~ 8
+s. p. 2 + = [
+  "Double Bogey"
+]
+
+s. p. 3 + > [
+  "Haha you loser"
+]
+
+
+$
