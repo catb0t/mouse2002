@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include <math.h>
 #include <time.h>
 
@@ -17,7 +18,7 @@
 #define  MAXFILES       100
 #define  BACKSPACE     charpos--
 #define  VALUE(digit)  (digit - '0')
-#define  UPPERCASE     ch = toupper(ch)
+#define  UPPERCASE     ch = (char) toupper(ch)
 #define  TOLERANCE     1.0e-6
 
 #ifndef  PI
@@ -56,6 +57,7 @@
 #define  VERSION         20
 #define  PROMPT          "\n> "
 
+#define COMPARE_EPS 1e-11 // (default) epsilon for fp comparisons
 
 enum tagtype
 { macro, parameter, loop };
@@ -131,6 +133,13 @@ double Int (double f);
 double Frac (double f);
 int Round (double x);
 
+bool  compare_eps (const double a, const double b, const double eps);
+
+// i think this is how we compare ieee-754 numbers instead of == in C
+bool compare_eps (const double a, const double b, const double eps) {
+  return fabsl(a - b) < eps;
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -143,12 +152,12 @@ main (int argc, char *argv[])
       sp = -1;
       esp = -1;
       do
-	{
-	  printf (PROMPT);
-	  fgets (line, 132, stdin);
-	  load ();
-	  interpret ();
-	}
+  {
+    printf (PROMPT);
+    fgets (line, 132, stdin);
+    load ();
+    interpret ();
+  }
       while (!done);
       exit (0);
     }
@@ -183,7 +192,7 @@ main (int argc, char *argv[])
 
 
 void
-display (long charpos)
+display (long charpos_local)
 {
   long pos;
   char *prog_ptr;
@@ -196,18 +205,18 @@ display (long charpos)
   for (j = 0; j < 4; j++)
     {
       if (j > sp)
-	printf ("  ..........");
+  printf ("  ..........");
       else
-	printf ("%12.4e", stack[sp - j]);
+  printf ("%12.4e", stack[sp - j]);
     }
   printf ("      ");
 
-  for (pos = charpos - HALFWIDTH; pos <= charpos + HALFWIDTH; pos++)
+  for (pos = charpos_local - HALFWIDTH; pos <= charpos_local + HALFWIDTH; pos++)
     {
       if ((pos >= 0) && (pos < proglen) && (prog_ptr[pos] >= ' '))
-	printf ("%c", prog_ptr[pos]);
+  printf ("%c", prog_ptr[pos]);
       else
-	printf (" ");
+  printf (" ");
     }
 
   printf ("\n");
@@ -219,10 +228,10 @@ display (long charpos)
 void
 error (short code)
 {
-  short tsp;
+  short tsp_local;
 
   printf ("\nEnvironment:\n");
-  for (tsp = 0; tsp < esp; tsp++)
+  for (tsp_local = 0; tsp_local < esp; tsp++)
     display (envstack[tsp].charpos);
   printf ("Instruction pointer:\n");
   display (charpos);
@@ -345,9 +354,9 @@ Getchar (void)
     {
       charpos++;
       if (source == 0)
-	ch = prog[charpos];
+  ch = prog[charpos];
       else
-	ch = prog_line[charpos];
+  ch = prog_line[charpos];
     }
   else
     error (1);
@@ -368,7 +377,7 @@ push (double datum)
 double
 pop (void)
 {
-  double result;
+  double result = 0;
   if (sp >= 0)
     {
       result = stack[sp];
@@ -398,11 +407,11 @@ skip (char lch, char rch)
     {
       Getchar ();
       if (ch == '"')
-	skipstring ();
+  skipstring ();
       else if (ch == lch)
-	count++;
+  count++;
       else if (ch == rch)
-	count--;
+  count--;
     }
   while (count != 0);
 }
@@ -416,11 +425,11 @@ skip2 (char lch, char rch1, char rch2)
     {
       Getchar ();
       if (ch == '"')
-	skipstring ();
+  skipstring ();
       else if (ch == lch)
-	count++;
+  count++;
       else if (ch == rch1 || ch == rch2)
-	count--;
+  count--;
     }
   while (count != 0);
 }
@@ -467,7 +476,7 @@ load (void)
   if (source == 0)
     {
       for (charpos = 0; charpos < MAXPROGLEN; charpos++)
-	prog[charpos] = ' ';
+  prog[charpos] = ' ';
       rewind (progfile);
       prog_ptr = prog;
       maxlen = MAXPROGLEN;
@@ -485,64 +494,64 @@ load (void)
     {
       lastchr = ch;
       if (source == 0)
-	{
-	  fread (&ch, 1, 1, progfile);
-	  if (feof (progfile))
-	    break;
-	}
+  {
+    fread (&ch, 1, 1, progfile);
+    if (feof (progfile))
+      break;
+  }
       else
-	{
-	  ch = *p++;
-	  if (ch == '\0' || ch == '\n')
-	    break;
-	}
+  {
+    ch = *p++;
+    if (ch == '\0' || ch == '\n')
+      break;
+  }
       if (ch == '~')
-	{
-	  if (source == 0)
-	    do
-	      {
-		fread (&ch, 1, 1, progfile);
-	      }
-	    while (ch != '\n');
-	  else
-	    break;
-	}
+  {
+    if (source == 0)
+      do
+        {
+    fread (&ch, 1, 1, progfile);
+        }
+      while (ch != '\n');
+    else
+      break;
+  }
       else if (charpos < maxlen - 1)
-	{
-	  charpos++;
-	  prog_ptr[charpos] = ch;
-	  if (ch == '\"')
-	    in = !in;
-	  if (ch == '&' && !in)
-	    in_amp = 1;
-	  if (ch == 10 || ch == 13 || ch == '\n' || ch == '\t' || ch == '\r')
-	    prog_ptr[charpos] = ch = ' ';
-	  if (in_amp && ch == ' ')
-	    {
-	      prog_ptr[charpos] = ch = '&';
-	      in_amp = 0;
-	    }
-	  if (in_amp && ch == ';')
-	    {
-	      prog_ptr[charpos] = ch = '&';
-	      charpos++;
-	      prog_ptr[charpos] = ch = ';';
-	      in_amp = 0;
-	    }
-	  if (ch == ' ' && !in && !isdigit (lastchr) && (lastchr != '\''))
-	    {
-	      charpos--;
-	      ch = prog_ptr[charpos];
-	    }
-	  else if (!in && lastchr == ' ' && !isdigit (ch) && ch != '\"'
-		   && prog_ptr[charpos - 2] != '\'')
-	    prog_ptr[--charpos] = ch;
-	}
+  {
+    charpos++;
+    prog_ptr[charpos] = ch;
+    if (ch == '\"')
+      in = !in;
+    if (ch == '&' && !in)
+      in_amp = 1;
+    if (ch == 10 || ch == 13 || ch == '\n' || ch == '\t' || ch == '\r')
+      prog_ptr[charpos] = ch = ' ';
+    if (in_amp && ch == ' ')
+      {
+        prog_ptr[charpos] = ch = '&';
+        in_amp = 0;
+      }
+    if (in_amp && ch == ';')
+      {
+        prog_ptr[charpos] = ch = '&';
+        charpos++;
+        prog_ptr[charpos] = ch = ';';
+        in_amp = 0;
+      }
+    if (ch == ' ' && !in && !isdigit (lastchr) && (lastchr != '\''))
+      {
+        charpos--;
+        ch = prog_ptr[charpos];
+      }
+    else if (!in && lastchr == ' ' && !isdigit (ch) && ch != '\"'
+       && prog_ptr[charpos - 2] != '\'')
+      prog_ptr[--charpos] = ch;
+  }
       else
-	{
-	  printf ("Program is too long\n");
-	  disaster = 1;
-	}
+  {
+    printf ("Program is too long\n");
+    disaster = 1;
+  }
     }
   proglen = charpos + 1;
   if (source == 1)
@@ -564,12 +573,12 @@ makedeftable (void)
     {
       Getchar ();
       if (ch == '$' && charpos < proglen - 1)
-	{
-	  Getchar ();
-	  UPPERCASE;
-	  if ((ch >= 'A') && (ch <= 'Z'))
-	    macdefs[ch - 'A'] = charpos;
-	}
+  {
+    Getchar ();
+    UPPERCASE;
+    if ((ch >= 'A') && (ch <= 'Z'))
+      macdefs[ch - 'A'] = charpos;
+  }
     }
   while (charpos < proglen - 1);
 }
@@ -593,285 +602,287 @@ interpret (void)
     {
       Getchar ();
       if (ch == ' ')
-	continue;
+  continue;
       if (tracing)
-	display (charpos);
+  display (charpos);
       if (isdigit (ch))
-	{
-	  temp = 0;
-	  while (isdigit (ch))
-	    {
-	      temp = 10 * temp + VALUE (ch);
-	      Getchar ();
-	    }
-	  if (ch == '.')
-	    {
-	      Getchar ();
-	      temp2 = 1.0;
-	      while (isdigit (ch))
-		{
-		  temp2 /= 10.0;
-		  temp += temp2 * VALUE (ch);
-		  Getchar ();
-		}
-	    }
-	  push (temp);
-	  BACKSPACE;
-	}
+  {
+    temp = 0;
+    while (isdigit (ch))
+      {
+        temp = 10 * temp + VALUE (ch);
+        Getchar ();
+      }
+    if (ch == '.')
+      {
+        Getchar ();
+        temp2 = 1.0;
+        while (isdigit (ch))
+    {
+      temp2 /= 10.0;
+      temp += temp2 * VALUE (ch);
+      Getchar ();
+    }
+      }
+    push (temp);
+    BACKSPACE;
+  }
 
       else if ((ch >= 'A') && (ch <= 'Z'))
-	push (ch - 'A');
+  push (ch - 'A');
       else if ((ch >= 'a') && (ch <= 'z'))
-	push (ch - 'a' + offset);
+  push ((double) (ch - 'a' + offset));
       else
-	switch (ch)
-	  {
+  switch (ch)
+    {
 
-	  case '$':
-	    break;
-	  case '_':
-	    push (-pop ());
-	    break;
+    case '$':
+      break;
+    case '_':
+      push (-pop ());
+      break;
 
-	  case '+':
-	    push (pop () + pop ());
-	    break;
+    case '+':
+      push (pop () + pop ());
+      break;
 
-	  case '-':
-	    temp = pop ();
-	    push (pop () - temp);
-	    break;
+    case '-':
+      temp = pop ();
+      push (pop () - temp);
+      break;
 
-	  case '*':
-	    push (pop () * pop ());
-	    break;
+    case '*':
+      push (pop () * pop ());
+      break;
 
-	  case '/':
-	    temp = pop ();
-	    if (temp != 0)
-	      push (pop () / temp);
-	    else
-	      error (4);
-	    break;
+    case '/':
+      temp = pop ();
+      if ( ! compare_eps(temp, 0, COMPARE_EPS) )
+        push (pop () / temp);
+      else
+        error (4);
+      break;
 
-	  case '\\':
-	    temp = pop ();
-	    if (temp != 0)
-	      push ((long) pop () % (long) temp);
-	    else
-	      error (5);
-	    break;
+    case '\\':
+      temp = pop ();
+      if ( ! compare_eps(temp, 0, COMPARE_EPS) )
+        push ((double) (((long) pop()) % (long) temp));
+      else
+        error (5);
+      break;
 
-	  case '?':
-	    Getchar ();
-	    if (ch == '\'')
-	      {
-		fgets (instr, 2, stdin);
-		chomp (instr);
-		sscanf (instr, "%c", &ch);
-		push ((double) ch);
-	      }
-	    else
-	      {
-		fgets (instr, 25, stdin);
-		chomp (instr);
-		sscanf (instr, "%lf", &temp);
-		push (temp);
-		BACKSPACE;
-	      }
-	    break;
+    case '?':
+      Getchar ();
+      if (ch == '\'')
+        {
+    fgets (instr, 2, stdin);
+    chomp (instr);
+    sscanf (instr, "%c", &ch);
+    push ((double) ch);
+        }
+      else
+        {
+    fgets (instr, 25, stdin);
+    chomp (instr);
+    sscanf (instr, "%lf", &temp);
+    push (temp);
+    BACKSPACE;
+        }
+      break;
 
-	  case '!':
-	    Getchar ();
-	    if (ch == '\'')
-	      printf ("%c", Round (pop ()));
-	    else
-	      {
-		sprintf (format_str, "%%%d.", display_width);
-		sprintf (temp_str, "%d", display_digits);
-		strcat (format_str, temp_str);
-		if (display_mode == 0)
-		  strcat (format_str, "f");
-		else if (display_mode == 1)
-		  strcat (format_str, "E");
-		else
-		  strcat (format_str, "G");
-		printf (format_str, pop ());
-		BACKSPACE;
-	      }
-	    break;
+    case '!':
+      Getchar ();
+      if (ch == '\'')
+        printf ("%c", Round (pop ()));
+      else
+        {
+    sprintf (format_str, "%%%ld.", display_width);
+    sprintf (temp_str, "%ld", display_digits);
+    strcat (format_str, temp_str);
+    if (display_mode == 0)
+      strcat (format_str, "f");
+    else if (display_mode == 1)
+      strcat (format_str, "E");
+    else
+      strcat (format_str, "G");
+    printf (format_str, pop ());
+    BACKSPACE;
+        }
+      break;
 
-	  case '"':
-	    do
-	      {
-		Getchar ();
-		if (ch == '!')
-		  printf ("\n");
-		else if (ch != '"')
-		  printf ("%c", ch);
-	      }
-	    while (ch != '"');
-	    break;
+    case '"':
+      do
+        {
+    Getchar ();
+    if (ch == '!')
+      printf ("\n");
+    else if (ch != '"')
+      printf ("%c", ch);
+        }
+      while (ch != '"');
+      break;
 
-	  case ':':
-	    temp = pop ();
-	    data[Round (temp)] = pop ();
-	    break;
+    case ':':
+      temp = pop ();
+      data[Round (temp)] = pop ();
+      break;
 
-	  case '.':
-	    push (data[Round (pop ())]);
-	    break;
+    case '.':
+      push (data[Round (pop ())]);
+      break;
 
-	  case '<':
-	    temp = pop ();
-	    push ((pop () < temp) ? 1 : 0);
-	    break;
+    case '<':
+      temp = pop ();
+      push ((pop () < temp) ? 1 : 0);
+      break;
 
-	  case '=':
-	    push ((pop () == pop ())? 1 : 0);
-	    break;
+    case '=':
+      temp = pop();
+      const double temp_pop2 = pop();
+      push ((compare_eps(temp, temp_pop2, COMPARE_EPS))? 1 : 0);
+      break;
 
-	  case '>':
-	    temp = pop ();
-	    push ((pop () > temp) ? 1 : 0);
-	    break;
+    case '>':
+      temp = pop ();
+      push ((pop () > temp) ? 1 : 0);
+      break;
 
-	  case '[':
-	    if (pop () <= 0)
-	      skip2 ('[', '|', ']');
-	    break;
+    case '[':
+      if (pop () <= 0)
+        skip2 ('[', '|', ']');
+      break;
 
-	  case ']':
-	    break;
-	  case '|':
-	    skip ('[', ']');
-	    break;
+    case ']':
+      break;
+    case '|':
+      skip ('[', ']');
+      break;
 
-	  case '(':
-	    pushenv (loop);
-	    break;
+    case '(':
+      pushenv (loop);
+      break;
 
-	  case ')':
-	    charpos = envstack[esp].charpos;
-	    break;
+    case ')':
+      charpos = envstack[esp].charpos;
+      break;
 
-	  case '^':
-	    if (pop () <= 0)
-	      {
-		popenv ();
-		skip ('(', ')');
-	      }
-	    break;
+    case '^':
+      if (pop () <= 0)
+        {
+    popenv ();
+    skip ('(', ')');
+        }
+      break;
 
-	  case '#':
-	    Getchar ();
-	    UPPERCASE;
-	    if ((ch >= 'A') && (ch <= 'Z'))
-	      {
-		if (macdefs[ch - 'A'] > 0)
-		  {
-		    pushenv (macro);
-		    charpos = macdefs[ch - 'A'];
-		    if (nextfree + LOCSIZE <= MAXADDR)
-		      {
-			offset = nextfree;
-			nextfree += LOCSIZE;
-		      }
-		    else
-		      error (10);
-		  }
-		else
-		  error (6);
-	      }
-	    else
-	      error (7);
-	    break;
+    case '#':
+      Getchar ();
+      UPPERCASE;
+      if ((ch >= 'A') && (ch <= 'Z'))
+        {
+    if (macdefs[ch - 'A'] > 0)
+      {
+        pushenv (macro);
+        charpos = macdefs[ch - 'A'];
+        if (nextfree > (MAXADDR - LOCSIZE)) // previous: nextfree + LOCSIZE <= MAXADDR
+          {
+      offset = nextfree;
+      nextfree += LOCSIZE;
+          }
+        else
+          error (10);
+      }
+    else
+      error (6);
+        }
+      else
+        error (7);
+      break;
 
-	  case '@':
-	    do
-	      {
-		popenv ();
-	      }
-	    while (envtag != macro);
-	    skip ('#', ';');
-	    nextfree -= LOCSIZE;
-	    break;
+    case '@':
+      do
+        {
+    popenv ();
+        }
+      while (envtag != macro);
+      skip ('#', ';');
+      nextfree -= LOCSIZE;
+      break;
 
-	  case '%':
-	    pushenv (parameter);
-	    parbal = 1;
-	    tsp = esp;
-	    do
-	      {
-		tsp--;
-		switch (envstack[tsp].tag)
-		  {
-		  case macro:
-		    parbal--;
-		    break;
-		  case parameter:
-		    parbal++;
-		    break;
-		  case loop:
-		    break;
-		  }
-	      }
-	    while (parbal != 0);
-	    charpos = envstack[tsp].charpos;
-	    offset = envstack[tsp].offset;
-	    parnum = pop ();
-	    do
-	      {
-		Getchar ();
-		if (ch == '"')
-		  skipstring ();
-		else if (ch == '#')
-		  skip ('#', ';');
-		else if (ch == ',')
-		  parnum--;
-		else if (ch == ';')
-		  {
-		    parnum = 0;
-		    popenv ();
-		  }
-	      }
-	    while (parnum != 0);
-	    break;
+    case '%':
+      pushenv (parameter);
+      parbal = 1;
+      tsp = esp;
+      do
+        {
+    tsp--;
+    switch (envstack[tsp].tag)
+      {
+      case macro:
+        parbal--;
+        break;
+      case parameter:
+        parbal++;
+        break;
+      case loop:
+        break;
+      }
+        }
+      while (parbal != 0);
+      charpos = envstack[tsp].charpos;
+      offset = envstack[tsp].offset;
+      parnum = (long) pop ();
+      do
+        {
+    Getchar ();
+    if (ch == '"')
+      skipstring ();
+    else if (ch == '#')
+      skip ('#', ';');
+    else if (ch == ',')
+      parnum--;
+    else if (ch == ';')
+      {
+        parnum = 0;
+        popenv ();
+      }
+        }
+      while (parnum != 0);
+      break;
 
-	  case ',':
-	  case ';':
-	    popenv ();
-	    break;
+    case ',':
+    case ';':
+      popenv ();
+      break;
 
-	  case '\'':
-	    Getchar ();
-	    push (ch);
-	    break;
+    case '\'':
+      Getchar ();
+      push (ch);
+      break;
 
-	  case '{':
-	    tracing = 1;
-	    break;
+    case '{':
+      tracing = 1;
+      break;
 
-	  case '}':
-	    tracing = 0;
-	    break;
+    case '}':
+      tracing = 0;
+      break;
 
-	  case '&':
-	    p = amp_str;
-	    Getchar ();
-	    while (ch != '&' && ch != '$')
-	      {
-		*p++ = tolower (ch);
-		Getchar ();
-	      }
-	    *p = '\0';
-	    process_amp (amp_str);
-	    break;
+    case '&':
+      p = amp_str;
+      Getchar ();
+      while (ch != '&' && ch != '$')
+        {
+    *p++ = (char) tolower (ch);
+    Getchar ();
+        }
+      *p = '\0';
+      process_amp (amp_str);
+      break;
 
-	  default:
-	    error (11);
-	    break;
-	  }
+    default:
+      error (11);
+      break;
+    }
     }
   while (!((ch == '$') || disaster));
 }
@@ -879,7 +890,7 @@ interpret (void)
 void
 process_amp (char *str)
 {
-  long i, j;
+  long i = 0, j_local = 0;
   double hr, min, sec;
   struct tm *systime;
   time_t t;
@@ -898,9 +909,9 @@ process_amp (char *str)
     {
       temp = pop ();
       if (temp >= 0.0)
-	push (sqrt (sqrt (temp)));
+  push (sqrt (sqrt (temp)));
       else
-	error (31);
+  error (31);
     }
 
   else if (!strcmp (str, "10x"))
@@ -913,18 +924,18 @@ process_amp (char *str)
     {
       temp = pop ();
       if (fabs (temp) <= 1.0)
-	push (acos (temp) / angle_factor);
+  push (acos (temp) / angle_factor);
       else
-	error (12);
+  error (12);
     }
 
   else if (!strcmp (str, "acosh"))
     {
       temp = pop ();
       if (temp >= 1.0)
-	push (log (temp + sqrt (temp * temp - 1.0)));
+  push (log (temp + sqrt (temp * temp - 1.0)));
       else
-	error (13);
+  error (13);
     }
 
   else if (!strcmp (str, "and"))
@@ -938,9 +949,9 @@ process_amp (char *str)
     {
       temp = pop ();
       if (fabs (temp) <= 1.0)
-	push (asin (temp) / angle_factor);
+  push (asin (temp) / angle_factor);
       else
-	error (14);
+  error (14);
     }
 
   else if (!strcmp (str, "asinh"))
@@ -962,9 +973,9 @@ process_amp (char *str)
     {
       temp = pop ();
       if (fabs (temp) < 1.0)
-	push (0.5 * log ((1.0 + temp) / (1.0 - temp)));
+  push (0.5 * log ((1.0 + temp) / (1.0 - temp)));
       else
-	error (15);
+  error (15);
     }
 
   else if (!strcmp (str, "au"))
@@ -987,14 +998,14 @@ process_amp (char *str)
       itemp = Round (pop ());
       itemp2 = Round (pop ());
       if ((itemp >= 0) && (itemp2 >= 0) && (itemp <= itemp2))
-	{
-	  temp = 1.0;
-	  for (i = itemp2, j = (itemp2 - itemp); j >= 1; i--, j--)
-	    temp *= (double) i / (double) j;
-	  push (temp);
-	}
+  {
+    temp = 1.0;
+    for (i = itemp2, j_local = (itemp2 - itemp); j_local >= 1; i--, j_local--)
+      temp *= (double) i / (double) j;
+    push (temp);
+  }
       else
-	error (23);
+  error (23);
     }
 
   else if (!strcmp (str, "cont"))
@@ -1016,11 +1027,11 @@ process_amp (char *str)
     {
       temp = pop ();
       if (temp > 0.0)
-	push (pow (temp, 1.0 / 3.0));
-      else if (temp == 0.0)
-	push (0.0);
+  push (pow (temp, 1.0 / 3.0));
+      else if (! compare_eps(temp, 0, COMPARE_EPS))
+  push (0.0);
       else
-	error (30);
+  error (30);
     }
 
   else if (!strcmp (str, "c>f"))
@@ -1085,14 +1096,14 @@ process_amp (char *str)
     {
       ntemp = Round (pop ());
       if (ntemp >= 0)
-	{
-	  temp = 1.0;
-	  for (i = 2; i <= ntemp; i++)
-	    temp *= (double) i;
-	  push (temp);
-	}
+  {
+    temp = 1.0;
+    for (i = 2; i <= ntemp; i++)
+      temp *= (double) i;
+    push (temp);
+  }
       else
-	error (21);
+  error (21);
     }
 
   else if (!strcmp (str, "fclose"))
@@ -1111,29 +1122,29 @@ process_amp (char *str)
     {
       itemp = Round (pop ());
       itemp2 = Round (pop ());
-      sprintf (filenum_str, "%03d", itemp2);
+      sprintf (filenum_str, "%03ld", itemp2);
       strcpy (filename_str, "mouse.");
       strcat (filename_str, filenum_str);
       switch ((int) itemp)
-	{
-	case 0:
-	  strcpy (filemode_str, "r");
-	  break;
-	case 1:
-	  strcpy (filemode_str, "w");
-	  break;
-	case 2:
-	  strcpy (filemode_str, "rb");
-	  break;
-	case 3:
-	  strcpy (filemode_str, "wb");
-	  break;
-	}
+  {
+  case 0:
+    strcpy (filemode_str, "r");
+    break;
+  case 1:
+    strcpy (filemode_str, "w");
+    break;
+  case 2:
+    strcpy (filemode_str, "rb");
+    break;
+  case 3:
+    strcpy (filemode_str, "wb");
+    break;
+  }
       if ((fp[itemp2] = fopen (filename_str, filemode_str)) == NULL)
-	{
-	  error (28);
-	  return;
-	}
+  {
+    error (28);
+    return;
+  }
     }
 
   else if (!strcmp (str, "frac"))
@@ -1159,15 +1170,15 @@ process_amp (char *str)
 
   else if (!strcmp (str, "f!"))
     {
-      sprintf (format_str, "%%%d.", display_width);
-      sprintf (temp_str, "%d", display_digits);
+      sprintf (format_str, "%%%ld.", display_width);
+      sprintf (temp_str, "%ld", display_digits);
       strcat (format_str, temp_str);
       if (display_mode == 0)
-	strcat (format_str, "f");
+  strcat (format_str, "f");
       else if (display_mode == 1)
-	strcat (format_str, "E");
+  strcat (format_str, "E");
       else
-	strcat (format_str, "G");
+  strcat (format_str, "G");
       itemp = Round (pop ());
       fprintf (fp[itemp], format_str, pop ());
     }
@@ -1182,13 +1193,13 @@ process_amp (char *str)
     {
       itemp = Round (pop ());
       do
-	{
-	  Getchar ();
-	  if (ch == '!')
-	    fprintf (fp[itemp], "\n");
-	  else if (ch != '"')
-	    fprintf (fp[itemp], "%c", ch);
-	}
+  {
+    Getchar ();
+    if (ch == '!')
+      fprintf (fp[itemp], "\n");
+    else if (ch != '"')
+      fprintf (fp[itemp], "%c", ch);
+  }
       while (ch != '"');
     }
 
@@ -1281,36 +1292,36 @@ process_amp (char *str)
     {
       temp = pop ();
       if (temp > 0.0)
-	push (log (temp));
+  push (log (temp));
       else
-	error (16);
+  error (16);
     }
 
   else if (!strcmp (str, "log"))
     {
       temp = pop ();
       if (temp > 0.0)
-	push (log (temp));
+  push (log (temp));
       else
-	error (16);
+  error (16);
     }
 
   else if (!strcmp (str, "log2"))
     {
       temp = pop ();
       if (temp > 0.0)
-	push (log (temp) / log (2.0));
+  push (log (temp) / log (2.0));
       else
-	error (17);
+  error (17);
     }
 
   else if (!strcmp (str, "log10"))
     {
       temp = pop ();
       if (temp > 0.0)
-	push (log10 (temp));
+  push (log10 (temp));
       else
-	error (18);
+  error (18);
     }
 
   else if (!strcmp (str, "l>gal"))
@@ -1348,7 +1359,7 @@ process_amp (char *str)
   else if (!strcmp (str, "ne"))
     {
       temp = pop ();
-      push ((pop () != temp) ? 1 : 0);
+      push ((! compare_eps(pop(), temp, COMPARE_EPS)) ? 1 : 0);
     }
 
   else if (!strcmp (str, "nip"))
@@ -1388,26 +1399,26 @@ process_amp (char *str)
       itemp = Round (pop ());
       itemp2 = Round (pop ());
       if ((itemp >= 0) && (itemp2 >= 0) && (itemp <= itemp2))
-	{
-	  temp = 1.0;
-	  for (i = itemp2; i >= (itemp2 - itemp + 1); i--)
-	    temp *= (double) i;
-	  push (temp);
-	}
+  {
+    temp = 1.0;
+    for (double i2 = (double) itemp2; i2 >= (itemp2 - itemp + 1); i2--)
+      temp *= (double) i2;
+    push (temp);
+  }
       else
-	error (24);
+  error (24);
     }
 
   else if (!strcmp (str, "pow"))
     {
       temp = pop ();
       temp2 = pop ();
-      error_flag = ((temp2 == 0.0) &&
-		    (temp <= 0.0)) || ((temp2 < 0) && (temp != Round (temp)));
+      error_flag = (compare_eps(temp2, 0.0, COMPARE_EPS) &&
+        (temp <= 0.0)) || ((temp2 < 0) && (! compare_eps(temp, Round(temp), COMPARE_EPS)));
       if (!error_flag)
-	push (pow (temp2, temp));
+  push (pow (temp2, temp));
       else
-	error (26);
+  error (26);
     }
 
   else if (!strcmp (str, "p>r"))
@@ -1431,9 +1442,9 @@ process_amp (char *str)
     {
       itemp = Round (pop ());
       if ((itemp >= 0) && (itemp < ARRAYSIZE))
-	push (array[itemp]);
+  push (array[itemp]);
       else
-	error (25);
+  error (25);
     }
 
   else if (!strcmp (str, "rearth"))
@@ -1442,10 +1453,10 @@ process_amp (char *str)
   else if (!strcmp (str, "recip"))
     {
       temp = pop ();
-      if (temp != 0.0)
-	push (1.0 / temp);
+      if (! compare_eps(temp, 0.0, COMPARE_EPS))
+  push (1.0 / temp);
       else
-	error (19);
+  error (19);
     }
 
   else if (!strcmp (str, "rev"))
@@ -1455,13 +1466,14 @@ process_amp (char *str)
     {
       temp = pop ();
       temp2 = pop ();
-      error_flag = (temp == 0.0) ||
-	((temp2 == 0.0) && (temp <= 0.0)) ||
-	((temp2 < 0) && ((1.0 / temp) != Round (1.0 / temp)));
+      error_flag = compare_eps(temp, 0.0, COMPARE_EPS) ||     // temp   != 0
+  (compare_eps(temp2, 0.0, COMPARE_EPS) && (temp <= 0.0)) ||  // temp2  >  0
+                                                              // 1/temp !~ 0
+  (! (compare_eps(temp2, 0, COMPARE_EPS)) && (compare_eps((1.0 / temp), Round(1.0 / temp), COMPARE_EPS)));
       if (!error_flag)
-	push (pow (temp2, 1.0 / temp));
+  push (pow (temp2, 1.0 / temp));
       else
-	error (27);
+  error (27);
     }
 
   else if (!strcmp (str, "rot"))
@@ -1502,7 +1514,7 @@ process_amp (char *str)
     }
 
   else if (!strcmp (str, "seed"))
-    srand (Round (pop ()));
+    srand ((unsigned int) Round (pop ()));
 
   else if (!strcmp (str, "shl"))
     {
@@ -1534,18 +1546,18 @@ process_amp (char *str)
     {
       temp = pop ();
       if (temp >= 0.0)
-	push (sqrt (temp));
+  push (sqrt (temp));
       else
-	error (20);
+  error (20);
     }
 
   else if (!strcmp (str, "sto"))
     {
       itemp = Round (pop ());
       if ((itemp >= 0) && (itemp < ARRAYSIZE))
-	array[itemp] = pop ();
+  array[itemp] = pop ();
       else
-	error (25);
+  error (25);
     }
 
   else if (!strcmp (str, "swap"))
@@ -1586,9 +1598,9 @@ process_amp (char *str)
   else if (!strcmp (str, "wsize"))
     {
       if ((wordsize >= 1) && (wordsize <= 32))
-	wordsize = Round (pop ());
+  wordsize = Round (pop ());
       else
-	error (22);
+  error (22);
     }
 
   else if (!strcmp (str, "xor"))
@@ -1615,7 +1627,7 @@ process_amp (char *str)
     {
       fgets (instr, 25, stdin);
       chomp (instr);
-      sscanf (instr, "%lx", &itemp);
+      sscanf (instr, "%ldx", &itemp);
       push ((double) itemp);
     }
 
@@ -1623,14 +1635,14 @@ process_amp (char *str)
     {
       fgets (instr, 25, stdin);
       chomp (instr);
-      sscanf (instr, "%lo", &itemp);
+      sscanf (instr, "%ldo", &itemp);
       push ((double) itemp);
     }
 
   else if (!strcmp (str, "!dec"))
     {
-      sprintf (format_str, "%%%d.", display_width);
-      sprintf (temp_str, "%dd", display_width);
+      sprintf (format_str, "%%%ld.", display_width);
+      sprintf (temp_str, "%ldd", display_width);
       strcat (format_str, temp_str);
       printf (format_str, (long) pop ());
     }
@@ -1639,11 +1651,11 @@ process_amp (char *str)
     {
       octhex_digits = ((wordsize - 1) / 4) + 1;
       if (wordsize == 32)
-	octhex_mask = 0xFFFFFFFF;
+  octhex_mask = 0xFFFFFFFF;
       else
-	octhex_mask = (1L << wordsize) - 1;
-      sprintf (format_str, "%%%d.", octhex_digits);
-      sprintf (temp_str, "%dX", octhex_digits);
+  octhex_mask = (1L << wordsize) - 1;
+      sprintf (format_str, "%%%ld.", octhex_digits);
+      sprintf (temp_str, "%ldX", octhex_digits);
       strcat (format_str, temp_str);
       printf (format_str, (long) pop () & octhex_mask);
     }
@@ -1652,31 +1664,31 @@ process_amp (char *str)
     {
       octhex_digits = ((wordsize - 1) / 3) + 1;
       if (wordsize == 32)
-	octhex_mask = 0xFFFFFFFF;
+  octhex_mask = 0xFFFFFFFF;
       else
-	octhex_mask = (1L << wordsize) - 1;
-      sprintf (format_str, "%%%d.", octhex_digits);
-      sprintf (temp_str, "%do", octhex_digits);
+  octhex_mask = (1L << wordsize) - 1;
+      sprintf (format_str, "%%%ld.", octhex_digits);
+      sprintf (temp_str, "%ldo", octhex_digits);
       strcat (format_str, temp_str);
       printf (format_str, (long) pop () & octhex_mask);
     }
 
   else if (!strcmp (str, "!stk"))
     {
-      sprintf (format_str, "%%%d.", display_width);
-      sprintf (temp_str, "%d", display_digits);
+      sprintf (format_str, "%%%ld.", display_width);
+      sprintf (temp_str, "%ld", display_digits);
       strcat (format_str, temp_str);
       if (display_mode == 0)
-	strcat (format_str, "f\n");
+  strcat (format_str, "f\n");
       else if (display_mode == 1)
-	strcat (format_str, "E\n");
+  strcat (format_str, "E\n");
       else
-	strcat (format_str, "G\n");
+  strcat (format_str, "G\n");
       if (sp < 0)
-	printf ("Stack empty");
+  printf ("Stack empty");
       else
-	for (i = 0; i <= sp; i++)
-	  printf (format_str, stack[i]);
+  for (i = 0; i <= sp; i++)
+    printf (format_str, stack[i]);
     }
 
   else
@@ -1686,8 +1698,7 @@ process_amp (char *str)
 void
 chomp (char *str)
 {
-  int len;
-  len = strlen (str);
+  size_t len = strlen(str);
   if (str[len - 1] == '\n')
     str[len - 1] = '\0';
 }
@@ -1695,13 +1706,13 @@ chomp (char *str)
 double
 Int (double f)
 {
-  return ((long) (f));
+  return ((double) (f));
 }
 
 double
 Frac (double f)
 {
-  return (f - (long) (f));
+  return ((long) f - (long) (f));
 }
 
 int
